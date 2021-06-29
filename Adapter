@@ -1,0 +1,42 @@
+public class Adapter extends PagedListAdapter<Entity_TableColums,RecyclerView.ViewHolder> {
+
+    private static final String TAG = "Adapter";
+    
+
+    public ChatAdapter(Context context, Lifecycle lifecycle) {
+        super(diffCallaback);
+        this.context = context;
+        this.lifecycle = lifecycle;
+    }
+
+
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view;
+        Log.d(TAG, "onCreateViewHolder: ViewType = "+viewType);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.new_chat_google_search,parent,false);
+        return new ViewHolderGoogleSearch(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        Entity_TableColums wrapper  = getItem(position);
+       
+        Onclick_MediaViewer viewer = new Onclick_MediaViewer();
+
+        ViewHolder vh =  holder;
+        
+     }
+     
+     private static final DiffUtil.ItemCallback<ChatEntity_TableColums> diffCallaback = new DiffUtil.ItemCallback<ChatEntity_TableColums>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull ChatEntity_TableColums oldItem, @NonNull ChatEntity_TableColums newItem) {
+            return oldItem.getDBid() == newItem.getDBid();
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull ChatEntity_TableColums oldItem, @NonNull ChatEntity_TableColums newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
