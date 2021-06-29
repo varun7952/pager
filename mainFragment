@@ -1,0 +1,86 @@
+public class ChatScreen extends Fragment implements View.OnClickListener, ChildEventListener, prominentdisclosure_Dialogfragment.transferPermission {
+    public static final String TAG = "###CHAT SCREEN###";
+    private EmojiconEditText TypedMsg;
+    private ImageButton Attachment_Button;
+    TextView OtherUserName, OnlineStatus;
+    ImageView OtherUserImage;
+    EmojIconActions emojIcon;
+    View ParentViewForEmoji;
+
+    ProgressBar progressBar;
+    private String UserImage_Intent;
+    private String UserPhone_Intent;
+    private String UserID_Intent;
+    private String Room_Name_Intent;
+    public static String UserName_Intent, User_FirebaseToken_Intent;
+
+    String SendMsg, time; // Sender_FCMToken;
+    //Toolbar Layout
+    LinearLayout chatToolbar, connectionToolbar;
+
+
+    private ChatAdapter adapter;
+
+    Toolbar toolbar;
+    private List<ChatEntity_TableColums> message;
+    Runnable runnableBackground;
+    public static DatabaseReference databaseReference;
+
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.chat_screen_main_fragment, container, false);
+        setRetainInstance(true);
+        if (message == null) {
+            message = new ArrayList<>();
+        }
+
+        TypedMsg = v.findViewById(R.id.Chat_Screen_Text_Message);
+        ImageButton sendButton = v.findViewById(R.id.Chat_Screen_Send);
+        ImageButton emo_Button = v.findViewById(R.id.Chat_Screen_Smiley);
+        Attachment_Button = v.findViewById(R.id.Chat_Screen_Attachment);
+        toolbar = getActivity().findViewById(R.id.Navigation_Drawer_toolbar);
+        progressBar = v.findViewById(R.id.loadPagination);
+
+        //Chat Toolbar
+
+        chatToolbar = toolbar.findViewById(R.id.toolbar_chat);
+        connectionToolbar = toolbar.findViewById(R.id.toolbar_connections);
+
+        
+        // RECYCLER VIEW
+        RecyclerView recyclerView = v.findViewById(R.id.Chat_Screen_Message_List);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, true);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
+
+
+       
+
+        setHasOptionsMenu(true);
+
+       Chat_ViewModel viewModel = new ViewModelProvider(this).get(Chat_ViewModel.class);
+
+       viewModel.chatList.observe(getViewLifecycleOwner(), new Observer<PagedList<ChatEntity_TableColums>>() {
+            @Override
+            public void onChanged(PagedList<ChatEntity_TableColums> chatEntity_tableColums) {
+                Log.d(TAG, "onChanged: Chat Entity = " + chatEntity_tableColums.size());
+                adapter.submitList(chatEntity_tableColums);
+            }
+        });
+
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                Log.d(TAG, "onItemRangeInserted: " + positionStart + " " + itemCount);
+                layoutManager.scrollToPositionWithOffset(positionStart, 0);
+            }
+        });
+
+        
+        return v;
+    }
