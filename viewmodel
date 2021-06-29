@@ -1,0 +1,11 @@
+public class Chat_ViewModel extends ViewModel {
+   private static final String TAG = "Chat View Model";
+    public final LiveData<PagedList<ChatEntity_TableColums>> chatList;
+
+
+    public Chat_ViewModel() {
+        chatList = new LivePagedListBuilder<>(
+                ChatRoomDatabase.getInstance(MyApplication.getmContext(),1).chatDAO().getPaginationChat(String.valueOf(Session.getOtherUserID())),20).build();
+}
+
+    }
